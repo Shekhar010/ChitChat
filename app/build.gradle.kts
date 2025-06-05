@@ -96,6 +96,15 @@ dependencies {
     // Kotlin serialization
     implementation(libs.kotlinx.serialization.json)
 
-
     // dependency for retrofit // gson for json parsing
+
+    // dependency for Cloudinary
+    implementation(libs.cloudinary.android.v231)
+
+    // change the ui color
+
+
+
+
+
 }

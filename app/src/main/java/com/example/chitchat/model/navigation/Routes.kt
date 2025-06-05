@@ -16,3 +16,9 @@ object Profile
 
 @Serializable
 object Chat
+
+@Serializable
+object Search
+
+@Serializable
+object EditDetails

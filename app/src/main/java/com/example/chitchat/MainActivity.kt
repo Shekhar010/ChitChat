@@ -6,7 +6,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.annotation.RequiresApi
-import com.example.chitchat.presentation.screens.MainScreen
+import com.example.chitchat.presentation.screens.main.MainScreen
 import com.example.chitchat.ui.theme.ChitChatTheme
 import dagger.hilt.android.AndroidEntryPoint
 

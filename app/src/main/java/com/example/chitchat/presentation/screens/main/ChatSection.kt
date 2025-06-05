@@ -1,5 +1,7 @@
-package com.example.chitchat.presentation.screens
+package com.example.chitchat.presentation.screens.main
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -40,12 +42,17 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.chitchat.R
 import com.example.chitchat.model.chat.Chats
+import com.example.chitchat.presentation.viewmodel.MainViewModel
 
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun ChatScreen(modifier: Modifier) {
+fun ChatScreen(
+    mainViewModel: MainViewModel = hiltViewModel()
+) {
     // which section is selected
     var section by remember { mutableStateOf(1) }
 

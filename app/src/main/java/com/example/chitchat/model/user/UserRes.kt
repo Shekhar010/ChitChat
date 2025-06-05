@@ -1,17 +1,17 @@
 package com.example.chitchat.model.user
 
 data class UserRes(
-    val userId: String?,
-    val fullName: String,
-    val email: String,
-    val phoneNumber: String,
-    val profileImageUrl: String?,
-    val gender: String?, // Optional: "Male", "Female", "Other"
-    val dateOfBirth: String?, // Format: "yyyy-MM-dd"
-    val accountCreatedAt: String?, // Timestamp
-    val lastLoginAt: Long?, // Timestamp
-    val isEmailVerified: Boolean?,
-    val isPhoneVerified: Boolean?,
-    val bio: String?,
-    val socialLinks: Map<String, String>?
+    val userId: String = "",
+    val fullName: String = "",
+    val email: String = "",
+    val phone: String = "",
+    val gender: String = "",
+    val dateOfBirth: String = "",
+    val bio: String = "",
+    val profileImageUrl: String = "",
+    val isEmailVerified: Boolean = false,
+    val isPhoneVerified: Boolean = false,
+    val accountCreatedAt: Long = 0L,
+    val lastLoginAt: Long = 0L,
+    val socialLinks: Map<String, String> = emptyMap()
 )

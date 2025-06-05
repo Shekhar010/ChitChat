@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -51,11 +52,13 @@ fun RegisterScreen(
 ) {
 
     val userRegistered by authViewModel.isRegistered.collectAsState()
-//
-//    LaunchedEffect(userRegistered) {
-//        navController.navigate(Login)
-//    }
-
+    // observe if user is registered or not
+    LaunchedEffect(userRegistered) {
+        if (userRegistered) {
+            // navigate to login screen
+            navController.navigate(Login)
+        }
+    }
 
     Box(
         modifier = Modifier
@@ -68,7 +71,7 @@ fun RegisterScreen(
             modifier = Modifier
                 .fillMaxWidth()
         )
-        Column(
+        LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(20.dp, 40.dp, 0.dp, 20.dp)
@@ -76,158 +79,157 @@ fun RegisterScreen(
             horizontalAlignment = Alignment.Start,
         )
         {
-            /* UI for -> title text and its description */
-            Spacer(modifier = Modifier.height(40.dp))
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth(.8F)
-            ) {
-                Text(
-                    text = "ChitChat",
-                    fontSize = 15.sp,
-                    fontWeight = FontWeight.Bold,
+            item {
+                /* UI for -> title text and its description */
+                Spacer(modifier = Modifier.height(40.dp))
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth(.8F)
+                ) {
+                    Text(
+                        text = "ChitChat",
+                        fontSize = 15.sp,
+                        fontWeight = FontWeight.Bold,
+                    )
+                    Spacer(modifier = Modifier.height(15.dp))
+                    Text(
+                        text = "Welcome User !",
+                        fontSize = 30.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color(0xFFEE8259)
+                    )
+                    Spacer(modifier = Modifier.height(5.dp))
+                    Text(
+                        text = "Please fill the details to continue, and if you are a member please click on Log-in",
+                        fontSize = 15.sp
+                    )
+                }
+
+                var name by rememberSaveable { mutableStateOf("") }
+                var phone by rememberSaveable { mutableStateOf("") }
+                var email by rememberSaveable { mutableStateOf("") }
+                var password by rememberSaveable { mutableStateOf("") }
+
+                Spacer(modifier = Modifier.height(20.dp))
+
+                /* UI for -> name field */
+                Spacer(modifier = Modifier.height(10.dp))
+                OutlinedTextField(
+                    value = name,
+                    onValueChange = { name = it },
+                    label = { Text("Full Name") },
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(12.dp),
+                    singleLine = true,
+                    enabled = true
                 )
-                Spacer(modifier = Modifier.height(15.dp))
-                Text(
-                    text = "Welcome User !",
-                    fontSize = 30.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color(0xFFEE8259)
+                /* UI for -> email field */
+                Spacer(modifier = Modifier.height(10.dp))
+                OutlinedTextField(
+                    value = phone,
+                    onValueChange = { phone = it },
+                    label = { Text("phone") },
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(12.dp),
+                    singleLine = true,
+                    enabled = true
                 )
-                Spacer(modifier = Modifier.height(5.dp))
-                Text(
-                    text = "Please fill the details to continue, and if you are a member please click on Log-in",
-                    fontSize = 15.sp
+                /* UI for -> email field */
+                Spacer(modifier = Modifier.height(10.dp))
+                OutlinedTextField(
+                    value = email,
+                    onValueChange = { email = it },
+                    label = { Text("Email Address") },
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(12.dp),
+                    singleLine = true,
+                    enabled = true
                 )
-            }
+                /* UI for -> password field */
+                Spacer(modifier = Modifier.height(10.dp))
+                OutlinedTextField(
+                    value = password,
+                    onValueChange = { password = it },
+                    label = { Text("Password") },
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(12.dp),
+                    visualTransformation = PasswordVisualTransformation()
+                )
 
-            var name by rememberSaveable { mutableStateOf("") }
-            var phone by rememberSaveable { mutableStateOf("") }
-            var email by rememberSaveable { mutableStateOf("") }
-            var password by rememberSaveable { mutableStateOf("") }
-
-            Spacer(modifier = Modifier.height(20.dp))
-
-            /* UI for -> name field */
-            Spacer(modifier = Modifier.height(10.dp))
-            OutlinedTextField(
-                value = name,
-                onValueChange = { name = it },
-                label = { Text("Full Name") },
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(12.dp),
-                singleLine = true,
-                enabled = true
-            )
-            /* UI for -> email field */
-            Spacer(modifier = Modifier.height(10.dp))
-            OutlinedTextField(
-                value = phone,
-                onValueChange = { phone = it },
-                label = { Text("phone") },
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(12.dp),
-                singleLine = true,
-                enabled = true
-            )
-            /* UI for -> email field */
-            Spacer(modifier = Modifier.height(10.dp))
-            OutlinedTextField(
-                value = email,
-                onValueChange = { email = it },
-                label = { Text("Email Address") },
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(12.dp),
-                singleLine = true,
-                enabled = true
-            )
-            /* UI for -> password field */
-            Spacer(modifier = Modifier.height(10.dp))
-            OutlinedTextField(
-                value = password,
-                onValueChange = { password = it },
-                label = { Text("Password") },
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(12.dp),
-                visualTransformation = PasswordVisualTransformation()
-            )
-
-            /* UI for -> login button */
-            Spacer(modifier = Modifier.height(30.dp))
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .wrapContentHeight(),
-                contentAlignment = Alignment.BottomCenter
-            ) {
-                Button(
-                    onClick = {
-                        // register the user
-                        // call the function to register the user and navigate to login page
-                        authViewModel.register(email, password, phone, name)
-                    },
+                /* UI for -> login button */
+                Spacer(modifier = Modifier.height(30.dp))
+                Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(60.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        Color(0xFFEE8259)
-                    )
+                        .wrapContentHeight(),
+                    contentAlignment = Alignment.BottomCenter
                 ) {
-                    Text("Register-User")
-
-                }
-            }
-            // observe the Register status
-
-            /* UI for -> ask the user to register */
-            Spacer(modifier = Modifier.height(30.dp))
-
-
-            Spacer(modifier = Modifier.weight(1f))
-            Box(
-                modifier = Modifier
-                    .align(Alignment.CenterHorizontally)
-            ) {
-                Row(
-                    modifier = Modifier,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    HorizontalDivider(modifier = Modifier.width(50.dp))
-                    Text(
-                        "Already have a Account",
+                    Button(
+                        onClick = {
+                            // register the user
+                            // call the function to register the user and navigate to login page
+                            authViewModel.register(email, password, phone, name)
+                        },
                         modifier = Modifier
-                            .padding(start = 10.dp, end = 10.dp),
-                        style = TextStyle(
-                            fontSize = 12.sp,
+                            .fillMaxWidth()
+                            .height(60.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            Color(0xFFEE8259)
                         )
-                    )
-                    HorizontalDivider(modifier = Modifier.width(50.dp))
+                    ) {
+                        Text("Register-User")
+
+                    }
                 }
-            }
-            Row(
-                modifier = Modifier
-                    .padding(top = 15.dp, bottom = 20.dp),
-                verticalAlignment = Alignment.Bottom
-            ) {
-                Button(
-                    onClick = {
-                        // navigate the user to login screen
-                        navController.navigate(Login)
-                    },
+                // observe the Register status
+
+                /* UI for -> ask the user to register */
+                Spacer(modifier = Modifier.height(30.dp))
+                Box(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .height(60.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        Color.Transparent
-                    ),
-                    border = BorderStroke(1.dp, Color(0xFFEE8259))
+                        .align(Alignment.Center)
                 ) {
-                    Text(
-                        "Log-in",
-                        style = TextStyle(
-                            color = Color(0xFFEE8259)
+                    Row(
+                        modifier = Modifier,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        HorizontalDivider(modifier = Modifier.width(50.dp))
+                        Text(
+                            "Already have a Account",
+                            modifier = Modifier
+                                .padding(start = 10.dp, end = 10.dp),
+                            style = TextStyle(
+                                fontSize = 12.sp,
+                            )
                         )
-                    )
+                        HorizontalDivider(modifier = Modifier.width(50.dp))
+                    }
+                }
+                Row(
+                    modifier = Modifier
+                        .padding(top = 15.dp, bottom = 20.dp),
+                    verticalAlignment = Alignment.Bottom
+                ) {
+                    Button(
+                        onClick = {
+                            // navigate the user to login screen
+                            navController.navigate(Login)
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(60.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            Color.Transparent
+                        ),
+                        border = BorderStroke(1.dp, Color(0xFFEE8259))
+                    ) {
+                        Text(
+                            "Log-in",
+                            style = TextStyle(
+                                color = Color(0xFFEE8259)
+                            )
+                        )
+                    }
                 }
             }
         }

@@ -6,8 +6,9 @@ import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.chitchat.data.repository.AuthenticationRepo
-import com.example.chitchat.data.repository.ProfileRepository
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.firestore.FirebaseFirestore
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -18,14 +19,15 @@ import javax.inject.Inject
 @HiltViewModel
 class AuthViewModel @Inject constructor(
     val authRepo: AuthenticationRepo,
-    val profileRepo: ProfileRepository
+    val firebaseFirestore: FirebaseFirestore
 ) : ViewModel() {
 
     // state flow
-    private val currentUser = FirebaseAuth.getInstance().currentUser
+    private var _currentUser = MutableStateFlow(FirebaseAuth.getInstance().currentUser)
+    val currentUser: StateFlow<FirebaseUser?> = _currentUser
 
     // login value
-    private var _isLoggedIn = MutableStateFlow(currentUser != null)
+    private var _isLoggedIn = MutableStateFlow(false)
     val isLoggedIn: StateFlow<Boolean> = _isLoggedIn
 
     // registration value
@@ -40,6 +42,9 @@ class AuthViewModel @Inject constructor(
             val result = authRepo.signIn(email, password)
             Log.d("login function returned ", "$result")
             result.onSuccess {
+                // set the current time to last login
+                Log.d("login successful", "user logged in successfully and now setting last login")
+                authRepo.setLastLogin()
                 _isLoggedIn.value = true
             }
             result.onFailure {
@@ -60,23 +65,11 @@ class AuthViewModel @Inject constructor(
     // function to register a user
     fun register(email: String, password: String, phone: String, name: String) {
         viewModelScope.launch {
-            val result = authRepo.registerUser(email, password)
-            if(result != null) {
+            val result = authRepo.registerUser(email, password, name, phone)
+            if (result != null) {
                 Log.d("register function", "user registered successfully")
                 _isRegistered.value = true
-                enterUserDetails(name, phone, email, result)
             }
         }
     }
-
-    // function to enter the user details such as name and phone
-
-    fun enterUserDetails(name: String, phone: String, email: String, result: String?) {
-        viewModelScope.launch {
-            // store the other details such as name, phone number, email, created timestamp in the datastore
-            profileRepo.storeUserDetails(name, phone, email, result)
-        }
-    }
-
-
 }
