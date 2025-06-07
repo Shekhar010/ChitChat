@@ -18,8 +18,8 @@ mongoose.connect(MONGO_URL, {
     useNewUrlParser: true,
     useUnifiedTopology: true
 })
-.then(() => console.log('✅ MongoDB connected'))
-.catch(err => console.error('❌ MongoDB connection error:', err));
+    .then(() => console.log('✅ MongoDB connected'))
+    .catch(err => console.error('❌ MongoDB connection error:', err));
 
 // HTTP + WebSocket Server
 const server = http.createServer(app);
@@ -29,35 +29,59 @@ const io = new Server(server, {
         methods: ["GET", "POST"]
     }
 });
+// map for storing the users that are online and map there actual userid with the socketid they got
+const userSocketMap = new Map();
+
 
 // Socket.io Logic
 io.on("connection", (socket) => {
     console.log("🔌 New user connected:", socket.id);
     io.emit("userJoined", "a new User came online");
 
+    // to send message
     socket.on("sendMessage", async (data) => {
         console.log("📨 Message received:", data);
-
+        // get the receiver id 
+        const receiverId = userSocketMap.get(data.receiverId)
+        // check if reciever is online or not 
         const Message = require('./models/messageModel');
         try {
-            const msg = new Message(data);
-            await msg.save();
-            io.emit("newMessage", msg);
+            if (receiverId) {
+                const msg = new Message(data);
+                await msg.save();
+                io.to(receiverId).emit("newMessage", msg)
+            } else {
+                const msg = new Message(data);
+                await msg.save();
+                // io.emit("newMessage", msg);
+            }
         } catch (err) {
             console.error("❌ Error saving message:", err.message);
         }
     });
 
+
+    // to map the user
+    socket.on("registerUser", (userid) => {
+        try {
+            userSocketMap.set(userid, socket.id);
+            console.log(`${userId} is mapped to socket ${socket.id}`);
+        } catch (err) {
+            console.error("❌ error mapping the user: ", err.message);
+        }
+    })
+
     socket.on("disconnect", () => {
         console.log("❌ User disconnected:", socket.id);
     });
+
 });
 
 // Message Routes
 const messageRoutes = require('./routes/messageRoute');
 app.use('/messages', messageRoutes);
 
-app.get('/', (req, res)=>{
+app.get('/', (req, res) => {
     res.send("server running");
 })
 
