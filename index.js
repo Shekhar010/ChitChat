@@ -32,7 +32,6 @@ const io = new Server(server, {
 // map for storing the users that are online and map there actual userid with the socketid they got
 const userSocketMap = new Map();
 
-
 // Socket.io Logic
 io.on("connection", (socket) => {
     console.log("🔌 New user connected:", socket.id);
@@ -46,6 +45,9 @@ io.on("connection", (socket) => {
         // check if reciever is online or not 
         const Message = require('./models/messageModel');
         try {
+            if (!receiverId) {
+                console.log(`Receiver with ID ${data.receiverId} is offline or not mapped.`);
+            }
             if (receiverId) {
                 const msg = new Message(data);
                 await msg.save();
@@ -63,15 +65,22 @@ io.on("connection", (socket) => {
 
     // to map the user
     socket.on("registerUser", (userid) => {
+        currentUserId = userid;
         try {
+            socket.userid = userid;
             userSocketMap.set(userid, socket.id);
-            console.log(`${userId} is mapped to socket ${socket.id}`);
+            console.log(`${userid} is mapped to socket ${socket.id}`);
         } catch (err) {
             console.error("❌ error mapping the user: ", err.message);
         }
     })
 
     socket.on("disconnect", () => {
+        // remove the user entry from current map
+        if (socket.userId) {
+            userSocketMap.delete(socket.userId);
+            console.log(`🗑️ Removed user ${socket.userId} from userSocketMap`);
+        }
         console.log("❌ User disconnected:", socket.id);
     });
 
