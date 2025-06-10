@@ -4,6 +4,7 @@ const http = require('http');
 const cors = require('cors');
 const { Server } = require('socket.io');
 require('dotenv').config();
+const Message = require('./models/messageModel');
 
 const app = express();
 const port = 3000;
@@ -43,7 +44,7 @@ io.on("connection", (socket) => {
         // get the receiver id 
         const receiverId = userSocketMap.get(data.receiverId)
         // check if reciever is online or not 
-        const Message = require('./models/messageModel');
+        
         try {
             if (!receiverId) {
                 console.log(`Receiver with ID ${data.receiverId} is offline or not mapped.`);
@@ -55,13 +56,19 @@ io.on("connection", (socket) => {
             } else {
                 const msg = new Message(data);
                 await msg.save();
-                // io.emit("newMessage", msg);
             }
         } catch (err) {
             console.error("❌ Error saving message:", err.message);
         }
     });
 
+    // world chat
+    socket.on("publicChat", async(data) => {
+        // dont save the message to database 
+        const msg = new Message(data);
+        await msg.save();
+        io.emit("worldChat", msg);
+    })
 
     // to map the user
     socket.on("registerUser", (userid) => {
