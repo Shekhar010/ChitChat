@@ -66,6 +66,8 @@ io.on("connection", (socket) => {
     socket.on("publicChat", async(data) => {
         // dont save the message to database 
         const msg = new Message(data);
+        // log this in server
+        console.log(`data received ${msg}`);
         await msg.save();
         io.emit("worldChat", msg);
     })
@@ -95,6 +97,7 @@ io.on("connection", (socket) => {
 
 // Message Routes
 const messageRoutes = require('./routes/messageRoute');
+const { log } = require('console');
 app.use('/messages', messageRoutes);
 
 app.get('/', (req, res) => {
