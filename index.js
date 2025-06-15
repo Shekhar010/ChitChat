@@ -72,6 +72,8 @@ io.on("connection", (socket) => {
         io.emit("worldChat", msg);
     })
 
+
+
     // to map the user
     socket.on("registerUser", (userid) => {
         currentUserId = userid;
@@ -100,9 +102,14 @@ const messageRoutes = require('./routes/messageRoute');
 const { log } = require('console');
 app.use('/messages', messageRoutes);
 
+// home route
 app.get('/', (req, res) => {
     res.send("server running");
 })
+
+// route to send registered user data 
+const userRoutes = require('./routes/userDataRoute');
+app.use('/user', userRoutes);
 
 // Start server
 server.listen(port, () => {
